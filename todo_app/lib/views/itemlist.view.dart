@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 
-class ListView extends StatefulWidget {
+class ItemListView extends StatefulWidget {
   @override
-  _ListViewState createState() => _ListViewState();
+  _ItemListViewState createState() => _ItemListViewState();
 }
 
-class _ListViewState extends State<ListView> {
+class _ItemListViewState extends State<ItemListView> {
   final _formKey = GlobalKey<FormState>();
   var _itemController = TextEditingController();
   List _lista = [];
+  bool checkedValue = false;
 
   @override
   Widget build(BuildContext context) {
@@ -16,10 +17,11 @@ class _ListViewState extends State<ListView> {
       appBar: AppBar(
         title: Text('To Do List'),
       ),
+      backgroundColor: Colors.white70,
       body: _body(), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
-
+  @override
   Widget _body() {
     return Scrollbar(
       child: Container(
@@ -28,28 +30,7 @@ class _ListViewState extends State<ListView> {
         child: Stack(
           children: <Widget>[
             Container(
-              child: ListView(
-                children: <Widget>[
-                  for (int i = 0; i < _lista.length; i++)
-                    Container(
-                      height: 60,
-                      width: 20,
-                      decoration: BoxDecoration(
-                        border: Border.all(width: 3),
-                        color: Colors.grey,
-                      ),
-                      child: ListTile(
-                        leading: Icon(Icons.map),
-                        title: Text(_lista[i].toString()),
-                        onLongPress: () {
-                          setState(() {
-
-                          });
-                        },
-                      ),
-                    ),
-                ],
-              ),
+              child: buildListComponent(context),
             ),
             Positioned(
               right: 10,
@@ -70,21 +51,32 @@ class _ListViewState extends State<ListView> {
     return ListView(
       children: <Widget>[
         for (int i = 0; i < _lista.length; i++)
-          Container(
-            height: 60,
-            width: 20,
-            decoration: BoxDecoration(
-              border: Border.all(width: 3),
-              color: Colors.grey,
+          Card(
+            borderOnForeground: true,
+            shadowColor: Colors.black,
+            elevation: 6,
+            margin: EdgeInsets.symmetric(vertical: 6, horizontal: 10),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20.0),
             ),
-            child: ListTile(
-              leading: Icon(Icons.map),
+            child: CheckboxListTile(
               title: Text(_lista[i].toString()),
-              onLongPress: () {
+              secondary: IconButton(
+                icon: Icon(Icons.backspace),
+                onPressed: () {
+                  setState(() {
+                    _lista.removeAt(i);
+                  });
+                },
+              ),
+              controlAffinity: ListTileControlAffinity.trailing,
+              onChanged: (response) {
                 setState(() {
-
+                  checkedValue = response;
+                  print(checkedValue);
                 });
               },
+              value: checkedValue,
             ),
           ),
       ],
@@ -128,7 +120,8 @@ class _ListViewState extends State<ListView> {
           ],
         );
       },
-
     );
   }
+
+
 }
