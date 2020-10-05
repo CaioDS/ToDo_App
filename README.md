@@ -1,5 +1,3 @@
-# ToDo_App
-
 # To Do App
 
 A Aplicação foi desenvolvida com objetivo de ajudar os usuários a organizar as tarefas do dia a dia. 
