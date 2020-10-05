@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:todo_app/controllers/item_controller.dart';
+import 'package:todo_app/models/Item.dart';
 
 class ItemListView extends StatefulWidget {
   @override
@@ -8,8 +10,22 @@ class ItemListView extends StatefulWidget {
 class _ItemListViewState extends State<ItemListView> {
   final _formKey = GlobalKey<FormState>();
   var _itemController = TextEditingController();
-  List _lista = [];
-  bool checkedValue = false;
+  var _controller = ItemController();
+  var _lista = List<Item>();
+
+
+  @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _controller.getAll().then((data) {
+        setState(() {
+          _lista = _controller.list;
+        });
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +33,7 @@ class _ItemListViewState extends State<ItemListView> {
       appBar: AppBar(
         title: Text('To Do List'),
       ),
-      backgroundColor: Colors.white70,
+      backgroundColor: Color(0xFAFAFAFF),
       body: _body(), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
@@ -60,23 +76,24 @@ class _ItemListViewState extends State<ItemListView> {
               borderRadius: BorderRadius.circular(20.0),
             ),
             child: CheckboxListTile(
-              title: Text(_lista[i].toString()),
+              title: Text(_lista[i].descricao),
               secondary: IconButton(
                 icon: Icon(Icons.backspace),
                 onPressed: () {
+                  _controller.delete(i);
                   setState(() {
-                    _lista.removeAt(i);
+                    _lista = _controller.list;
                   });
                 },
               ),
               controlAffinity: ListTileControlAffinity.trailing,
               onChanged: (response) {
                 setState(() {
-                  checkedValue = response;
-                  print(checkedValue);
+                  _lista[i].concluido = response;
                 });
+                _controller.updateList(_lista);
               },
-              value: checkedValue,
+              value: _lista[i].concluido,
             ),
           ),
       ],
@@ -110,8 +127,9 @@ class _ItemListViewState extends State<ItemListView> {
               ),
               onPressed: () {
                 if(_formKey.currentState.validate())
+                  _controller.create(Item(descricao: _itemController.text.toString(), concluido: false));
                   setState(() {
-                    _lista.add(_itemController.text);
+                    _lista = _controller.list;
                     _itemController.text = "";
                   });
                 Navigator.of(context).pop();
