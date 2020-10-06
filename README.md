@@ -12,4 +12,4 @@ A Aplicação foi desenvolvida com objetivo de ajudar os usuários a organizar a
 
 ## Link para o Vídeo de Apresentação
 
-https://youtu.be/4mgjijFnPgk
+https://youtu.be/t3ZAQMdYtlA
